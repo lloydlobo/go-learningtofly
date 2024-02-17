@@ -73,17 +73,27 @@ func TestNeuron_Propogate(t *testing.T) {
 		args args
 		want float32
 	}{
-		{"`0.5` and `1.0` chosen by a fair dice roll", &nron,
-			// Could've written `1.15` right away, but showing the entire formula makes the intentions clearer.
-			args{&[]float32{0.5, 1.0}}, float32((-0.3 * 0.5) + (0.8 * 1.0) + 0.5)},
-		{"max() (ReLU) works", &nron,
-			args{&[]float32{-10.0, -10.0}}, float32(0.0)},
+		{
+			"`0.5` and `1.0` chosen by a fair dice roll",
+			&nron,
+			args{&[]float32{0.5, 1.0}},
+			float32((-0.3 * 0.5) + (0.8 * 1.0) + 0.5), // Could've written `1.15` right away, but showing the entire formula makes the intentions clearer.
+		},
+		{
+			"max() (ReLU) works",
+			&nron,
+			args{&[]float32{-10.0, -10.0}},
+			float32(0.0),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.n.Propogate(tt.args.inputs); got != tt.want {
+			if got := tt.n.Propagate(tt.args.inputs); got != tt.want {
 				t.Errorf("Neuron.Propogate() = %v, want %v", got, tt.want)
 			}
 		})
 	}
+
+	// n := New(0.0, []float32{.1, .2, .3})
+	// n.Propogate()
 }

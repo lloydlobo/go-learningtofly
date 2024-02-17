@@ -18,7 +18,7 @@ func TestNew(t *testing.T) {
 		want Layer
 	}{
 		{
-			"reflect.DeepEqual",
+			"CreatesLayerWithNeurons",
 			args{
 				[]neuron.Neuron{
 					neuron.Random(rand.New(rand.NewSource(0)), uint(4)),
@@ -56,7 +56,7 @@ func TestRandom(t *testing.T) {
 		want Layer
 	}{
 		{
-			"reflect.DeepEqual",
+			"CreatesRandomLayer",
 			args{rand.New(rand.NewSource(0)), uint(4), uint(3)},
 			Layer{[]neuron.Neuron{
 				{Bias: 0.8903923, Weights: []float32{-0.51006985, 0.31191254, -0.8913123, -0.26482558}},
@@ -75,6 +75,12 @@ func TestRandom(t *testing.T) {
 }
 
 func TestLayer_Propogate(t *testing.T) {
+	n1 := (neuron.New(0.0, []float32{0.1, 0.2, 0.3}))
+	n2 := (neuron.New(0.0, []float32{0.4, 0.5, 0.6}))
+	lyr := &Layer{[]neuron.Neuron{n1, n2}}
+
+	inputs := []float32{-0.5, 0.0, 0.5} // Note: how did author infer it?
+
 	type args struct {
 		inputs []float32
 	}
@@ -84,11 +90,16 @@ func TestLayer_Propogate(t *testing.T) {
 		args        args
 		wantOutputs []float32
 	}{
-		// TODO: Add test cases.
+		{
+			"PropogatesInputsThroughNeurons",
+			lyr,
+			args{inputs},
+			[]float32{n1.Propagate(&inputs), n2.Propagate(&inputs)},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if gotOutputs := tt.l.Propogate(tt.args.inputs); !reflect.DeepEqual(gotOutputs, tt.wantOutputs) {
+			if gotOutputs := tt.l.Propagate(tt.args.inputs); !reflect.DeepEqual(gotOutputs, tt.wantOutputs) {
 				t.Errorf("Layer.Propogate() = %v, want %v", gotOutputs, tt.wantOutputs)
 			}
 		})

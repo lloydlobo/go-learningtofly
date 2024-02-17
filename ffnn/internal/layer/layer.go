@@ -2,6 +2,7 @@ package layer
 
 import (
 	"ffnn/internal/neuron"
+	"fmt"
 	"math/rand"
 )
 
@@ -23,11 +24,15 @@ func Random(rng *rand.Rand, inputSize, outputSize uint) Layer {
 	return Layer{Neurons: neurons}
 }
 
-func (l *Layer) Propogate(inputs []float32) (outputs []float32) {
-	outputs = make([]float32, len(inputs))
+func (l *Layer) Propagate(inputs []float32) (outputs []float32) {
+	neuronCount, inputCount := len(l.Neurons), len(inputs)
+	if inputCount <= neuronCount {
+		panic(fmt.Sprintf("mismatch in size: got: %v, want: %v", neuronCount, inputCount))
+	}
+	outputs = make([]float32, neuronCount)
 
-	for i, n := range l.Neurons {
-		outputs[i] = n.Propogate(&inputs)
+	for i := range neuronCount {
+		outputs[i] = l.Neurons[i].Propagate(&inputs)
 	}
 
 	return

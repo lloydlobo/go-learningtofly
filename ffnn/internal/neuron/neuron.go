@@ -38,7 +38,7 @@ func Random(rng *rand.Rand, inputSize uint) Neuron {
 // # Errors
 //
 //   - Panics if count of inputs and Neuron.Weights do not match.
-func (n *Neuron) Propogate(inputs *[]float32) float32 {
+func (n *Neuron) Propagate(inputs *[]float32) float32 {
 	count := len(*inputs)
 
 	if count != len(n.Weights) {

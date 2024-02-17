@@ -21,15 +21,24 @@ import (
 //
 //	layers[0]  layers[1]  layers[2]
 //	   3      ->   2     ->     1
+//
+// A neural network's most crucial operation is propogating numbers as such:
+//
+//	f([-0.3, 0.7, 0.0]) = -1.0
+//
+// .
 type Network struct {
-	Layers []layer.Layer
+	// Note: Layer and Neuron will remain an implementation detail, so we can
+	// introduce changes to our implementations without imposing breaking changes
+	// on the downstream packages (i.e. our library's users.)
+
+	// .
+	layers []layer.Layer
 }
 
 // New creates a new forward-feed neural network.
 func New(layers []layer.Layer) Network {
-	return Network{
-		Layers: layers,
-	}
+	return Network{layers}
 }
 
 func (n *Network) Random(rng *rand.Rand, layers []layertopology.LayerTopology) Network {
@@ -42,13 +51,13 @@ func (n *Network) Random(rng *rand.Rand, layers []layertopology.LayerTopology) N
 	}
 
 	return Network{
-		Layers: builtLayers,
+		layers: builtLayers,
 	}
 }
 
-func (n *Network) Propogate(inputs []float32) []float32 {
-	for _, l := range n.Layers {
-		inputs = l.Propogate(inputs)
+func (n *Network) Propagate(inputs []float32) []float32 {
+	for _, l := range n.layers {
+		inputs = l.Propagate(inputs)
 	}
 
 	return inputs
