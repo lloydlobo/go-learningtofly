@@ -102,9 +102,15 @@ func TestRandom(t *testing.T) {
 
 func TestNetwork_Propogate(t *testing.T) {
 	rng := rand.New(rand.NewSource(0))
-	layers := []layertopology.LayerTopology{}
-	// layers := []layertopology.LayerTopology{{Neurons: 3}, {Neurons: 2}, {Neurons: 1}}
-	n := Random(rng, layers)
+
+	emptyLayers := []layertopology.LayerTopology{}
+	emptyNetwork := Random(rng, emptyLayers)
+
+	layers := []layer.Layer{
+		{Neurons: []neuron.Neuron{neuron.New(0.0, []float32{-0.5, -0.4, -0.3}), neuron.New(0.0, []float32{-0.2, -0.1, 0.0})}},
+		{Neurons: []neuron.Neuron{neuron.New(0.0, []float32{-0.5, -0.5})}},
+	} // or use `layers := []layertopology.LayerTopology{{Neurons: 3}, {Neurons: 2}, {Neurons: 1}}`
+	network := New(layers)
 
 	type args struct {
 		inputs []float32
@@ -115,8 +121,18 @@ func TestNetwork_Propogate(t *testing.T) {
 		args args
 		want []float32
 	}{
-		{"PropogateInputsThroughEmptyLayers", &n, args{[]float32{}}, []float32{}},
-		// TODO: add more testcases
+		{
+			"PropagateInputsThroughEmptyLayers",
+			&emptyNetwork,
+			args{[]float32{}},
+			[]float32{},
+		},
+		{ // See reference: https://github.com/Patryk27/shorelark/blob/d598ef91f250db870af285c0f433d976170d649f/libs/neural-network/src/lib.rs#L144
+			"PropagateInputsThroughLayers",
+			&network,
+			args{[]float32{0.5, 0.6, 0.7}},
+			layers[1].Propagate(layers[0].Propagate([]float32{0.5, 0.6, 0.7})),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
