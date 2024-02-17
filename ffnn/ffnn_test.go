@@ -68,17 +68,24 @@ func TestRandom(t *testing.T) {
 		want Network
 	}{
 		{
+			// TODO: when len(layers) <= 1, expect error.
+			//	This feature is currently disabled via flag.
 			"CreateRandom_EmptyNetwork_LayerTopology",
 			args{rng, []layertopology.LayerTopology{}},
-			Network{layers: []layer.Layer{}},
+			Network{
+				layers: []layer.Layer{},
+			},
 		},
 		{
 			"CreateRandom_Network_LayerTopology",
 			args{rng, []layertopology.LayerTopology{{Neurons: 3}, {Neurons: 2}, {Neurons: 1}}},
 			Network{
 				layers: []layer.Layer{
-					{Neurons: []neuron.Neuron{{Bias: 0.8903923, Weights: []float32{-0.51006985, 0.31191254, -0.8913123}}, {Bias: -0.26482558, Weights: []float32{-0.4210391, -0.6151228, 0.3106643}}}},
-					{Neurons: []neuron.Neuron{{Bias: 0.7943394, Weights: []float32{-0.6652911, -0.42282867}}}},
+					{Neurons: []neuron.Neuron{
+						{Bias: 0.8903923, Weights: []float32{-0.51006985, 0.31191254, -0.8913123}},
+						{Bias: -0.26482558, Weights: []float32{-0.4210391, -0.6151228, 0.3106643}}}}, // layer with 3 neurons
+					{Neurons: []neuron.Neuron{
+						{Bias: 0.7943394, Weights: []float32{-0.6652911, -0.42282867}}}}, // layer with 2 neurons
 					{}, // Empty layer
 				},
 			},
@@ -94,6 +101,11 @@ func TestRandom(t *testing.T) {
 }
 
 func TestNetwork_Propogate(t *testing.T) {
+	rng := rand.New(rand.NewSource(0))
+	layers := []layertopology.LayerTopology{}
+	// layers := []layertopology.LayerTopology{{Neurons: 3}, {Neurons: 2}, {Neurons: 1}}
+	n := Random(rng, layers)
+
 	type args struct {
 		inputs []float32
 	}
@@ -103,7 +115,8 @@ func TestNetwork_Propogate(t *testing.T) {
 		args args
 		want []float32
 	}{
-		// TODO: Add test cases.
+		{"PropogateInputsThroughEmptyLayers", &n, args{[]float32{}}, []float32{}},
+		// TODO: add more testcases
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

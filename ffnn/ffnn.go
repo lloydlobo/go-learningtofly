@@ -42,7 +42,18 @@ func New(layers []layer.Layer) Network {
 }
 
 func Random(rng *rand.Rand, layers []layertopology.LayerTopology) Network {
-	builtLayers := make([]layer.Layer, len(layers))
+	flagImplemented := false
+
+	layerCount := len(layers)
+
+	if flagImplemented {
+		// See reference, https://github.com/Patryk27/shorelark/blob/d598ef91f250db870af285c0f433d976170d649f/libs/neural-network/src/lib.rs#L24
+		if layerCount <= 1 {
+			panic(fmt.Sprintf("expected layers [%+v] to have more than one layer, got: %v", layers, layerCount))
+		}
+	}
+
+	builtLayers := make([]layer.Layer, layerCount)
 
 	for i := range len(layers) - 1 {
 		inputSize, outputSize := layers[i].Neurons, layers[i+1].Neurons
