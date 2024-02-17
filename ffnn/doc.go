@@ -1,5 +1,9 @@
 // Package ffnn implements a feed-forward neural network.
 //
+// FFNNs are sometimes called multilayer perceptrons and they are one of the
+// building blocks of convolutional neural networks, such as DeepDream.
+// See source: https://pwy.io/posts/learning-to-fly-pt1/#nn-intro
+//
 // # Generate Documentation
 //
 //	$ godoc -http=localhost:6060

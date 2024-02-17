@@ -74,12 +74,12 @@ func TestRandom(t *testing.T) {
 	}
 }
 
-func TestLayer_Propogate(t *testing.T) {
+func TestLayer_Propagate(t *testing.T) {
 	n1 := (neuron.New(0.0, []float32{0.1, 0.2, 0.3}))
 	n2 := (neuron.New(0.0, []float32{0.4, 0.5, 0.6}))
 	lyr := &Layer{[]neuron.Neuron{n1, n2}}
 
-	inputs := []float32{-0.5, 0.0, 0.5} // Note: how did author infer it?
+	inputs := []float32{-0.5, 0.0, 0.5} // Note: how did the author infer it?
 
 	type args struct {
 		inputs []float32
@@ -91,7 +91,7 @@ func TestLayer_Propogate(t *testing.T) {
 		wantOutputs []float32
 	}{
 		{
-			"PropogatesInputsThroughNeurons",
+			"PropagatesInputsThroughNeurons",
 			lyr,
 			args{inputs},
 			[]float32{n1.Propagate(&inputs), n2.Propagate(&inputs)},
@@ -100,7 +100,7 @@ func TestLayer_Propogate(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if gotOutputs := tt.l.Propagate(tt.args.inputs); !reflect.DeepEqual(gotOutputs, tt.wantOutputs) {
-				t.Errorf("Layer.Propogate() = %v, want %v", gotOutputs, tt.wantOutputs)
+				t.Errorf("Layer.Propagate() = %v, want %v", gotOutputs, tt.wantOutputs)
 			}
 		})
 	}
