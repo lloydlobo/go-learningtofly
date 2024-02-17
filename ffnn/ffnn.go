@@ -41,13 +41,12 @@ func New(layers []layer.Layer) Network {
 	return Network{layers}
 }
 
-func (n *Network) Random(rng *rand.Rand, layers []layertopology.LayerTopology) Network {
-	var builtLayers []layer.Layer // PERF: make with capacity
+func Random(rng *rand.Rand, layers []layertopology.LayerTopology) Network {
+	builtLayers := make([]layer.Layer, len(layers))
 
 	for i := range len(layers) - 1 {
 		inputSize, outputSize := layers[i].Neurons, layers[i+1].Neurons
-
-		builtLayers = append(builtLayers, layer.Random(rng, inputSize, outputSize))
+		builtLayers[i] = layer.Random(rng, inputSize, outputSize)
 	}
 
 	return Network{
