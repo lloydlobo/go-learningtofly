@@ -17,7 +17,23 @@ func TestNew(t *testing.T) {
 		args args
 		want Layer
 	}{
-		// TODO: Add test cases.
+		{
+			"reflect.DeepEqual",
+			args{
+				[]neuron.Neuron{
+					neuron.Random(rand.New(rand.NewSource(0)), uint(4)),
+					neuron.Random(rand.New(rand.NewSource(1)), uint(8)),
+					neuron.Random(rand.New(rand.NewSource(2)), uint(9)),
+				},
+			},
+			Layer{
+				[]neuron.Neuron{
+					neuron.Random(rand.New(rand.NewSource(0)), uint(4)),
+					neuron.Random(rand.New(rand.NewSource(1)), uint(8)),
+					neuron.Random(rand.New(rand.NewSource(2)), uint(9)),
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -39,7 +55,15 @@ func TestRandom(t *testing.T) {
 		args args
 		want Layer
 	}{
-		// TODO: Add test cases.
+		{
+			"reflect.DeepEqual",
+			args{rand.New(rand.NewSource(0)), uint(4), uint(3)},
+			Layer{[]neuron.Neuron{
+				{Bias: 0.8903923, Weights: []float32{-0.51006985, 0.31191254, -0.8913123, -0.26482558}},
+				{Bias: -0.4210391, Weights: []float32{-0.6151228, 0.3106643, 0.7943394, -0.6652911}},
+				{Bias: -0.42282867, Weights: []float32{0.80520964, 0.6995605, -0.45390642, 0.21816039}},
+			}},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
