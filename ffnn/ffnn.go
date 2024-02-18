@@ -9,6 +9,10 @@ import (
 	"ffnn/internal/neuron"
 )
 
+// Note: Layer and Neuron will remain an implementation detail, so we can
+// introduce changes to our implementations without imposing breaking changes
+// on the downstream packages (i.e. our library's users.)
+
 // Network represents a neural network composed of layers, each containing
 // neurons with biases and output weights.
 //
@@ -34,10 +38,6 @@ import (
 // A neural network's most crucial operation is propogating numbers as such:
 //   - f([-0.3, 0.7, 0.0]) = -1.0
 type Network struct {
-	// Note: Layer and Neuron will remain an implementation detail, so we can
-	// introduce changes to our implementations without imposing breaking changes
-	// on the downstream packages (i.e. our library's users.)
-
 	layers []layer.Layer
 }
 
