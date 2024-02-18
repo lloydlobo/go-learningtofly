@@ -61,11 +61,13 @@ func TestRandom(t *testing.T) {
 	}
 }
 
-func TestNeuron_Propogate(t *testing.T) {
+func TestNeuron_Propagate(t *testing.T) {
 	nron := Neuron{Bias: 0.5, Weights: []float32{-0.3, 0.8}}
 
 	type args struct {
-		inputs *[]float32 // ensure equal quantity to avoid triggering panic in Neuron.Propogate function
+		// ensure equal quantity to avoid triggering
+		// panic in Neuron.Propagate function
+		inputs *[]float32
 	}
 	tests := []struct {
 		name string
@@ -73,16 +75,25 @@ func TestNeuron_Propogate(t *testing.T) {
 		args args
 		want float32
 	}{
-		{"`0.5` and `1.0` chosen by a fair dice roll", &nron,
-			// Could've written `1.15` right away, but showing the entire formula makes the intentions clearer.
-			args{&[]float32{0.5, 1.0}}, float32((-0.3 * 0.5) + (0.8 * 1.0) + 0.5)},
-		{"max() (ReLU) works", &nron,
-			args{&[]float32{-10.0, -10.0}}, float32(0.0)},
+		{
+			"`0.5` and `1.0` chosen by a fair dice roll",
+			&nron,
+			args{&[]float32{0.5, 1.0}},
+			float32((-0.3 * 0.5) + (0.8 * 1.0) + 0.5),
+			// Could've written `1.15` right away, but showing the
+			// entire formula makes the intentions clearer.
+		},
+		{
+			"max() (ReLU) works",
+			&nron,
+			args{&[]float32{-10.0, -10.0}},
+			float32(0.0),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.n.Propogate(tt.args.inputs); got != tt.want {
-				t.Errorf("Neuron.Propogate() = %v, want %v", got, tt.want)
+			if got := tt.n.Propagate(tt.args.inputs); got != tt.want {
+				t.Errorf("Neuron.Propagate() = %v, want %v", got, tt.want)
 			}
 		})
 	}
