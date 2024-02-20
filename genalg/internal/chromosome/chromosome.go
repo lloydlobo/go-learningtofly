@@ -7,11 +7,14 @@ type Chromosome struct {
 	Genes []float32
 }
 
-func New(genes []float32) *Chromosome {
-	return &Chromosome{Genes: genes}
+func New(genes []float32) Chromosome {
+	return Chromosome{Genes: genes}
 }
 
-func (c *Chromosome) Len() (geneCount uint)      { return uint(len(c.Genes)) }
+// Len returns length of slice Genes of a Chromosome.
+func (c *Chromosome) Len() (geneCount uint) { return uint(len(c.Genes)) }
+
+// Index returns the gene float32 value of a Chromosome at index i.
 func (c *Chromosome) Index(i int) (gene float32) { return c.Genes[i] }
 
 func (c *Chromosome) ApproxEqual(other *Chromosome, tolerance float32) bool {

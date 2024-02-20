@@ -1,46 +1,62 @@
 package genalg
 
 import (
-	"fmt"
+	"math/rand"
+
+	"genalg/internal/crossover"
+	"genalg/internal/individual"
+	"genalg/internal/selection"
 )
 
-type GeneticAlgorithm[S any] struct {
-	selectionMethod S
-
-	// crossoverMethod CrossoverMethod[I]
-
-	// mutationMethod MutationMethod[I]
-}
-
-func New[S any](selectionMethod S) GeneticAlgorithm[S] {
-	return GeneticAlgorithm[S]{
+func New[S SelectionMethod](selectionMethod S) GeneticAlgo[S] {
+	return GeneticAlgo[S]{
 		selectionMethod: selectionMethod,
+		crossoverMethod: nil,
 	}
 }
 
-func (ga GeneticAlgorithm[I]) Evolve(
-	population *[]I,
-	evaluateFitness func(individual *I) float32,
-) []I {
+type (
+	SelectionMethod selection.SelectionMethod[individual.Individual]
 
-	populCount := len(*population)
+	GeneticAlgo[S SelectionMethod] struct {
+		// Note: selection algorithm generally remains identical for the whole simulation, so it'll be wiser to go with constructor
+		selectionMethod S
 
-	if populCount == 0 {
+		// Note: Crossover doesn't actually happen on an individual, but rather on their chromosomes
+		crossoverMethod crossover.CrossoverMethod
+
+		// mutationMethod MutationMethod[I]
+	}
+)
+
+func (ga GeneticAlgo[S]) Evolve(
+	rng *rand.Rand,
+	population []individual.Individual,
+	fitnessFn func(indiv individual.Individual) float32,
+) []individual.Individual {
+
+	populationCount := len(population)
+	if populationCount == 0 {
 		panic("expected population to not be empty")
 	}
-	fmt.Printf("ga.selectionMethod: %v\n", ga.selectionMethod)
 
-	output := make([]I, populCount)
+	output := make([]individual.Individual, populationCount)
 
-	for i, p := range *population {
-		for j := i + 1; j < populCount; j++ {
-			fmt.Printf("[]interface { i j p }: {%v, %v, %v}\n", i, j, p)
-			// TODO selection
-			// TODO crossover
-			// TODO mutation
-			output[i] = p
-		}
+	for i := range population {
+		// 1. selection
+		parentA := (*ga.selectionMethod.Select(rng, &population)).Chromosome()
+		parentB := (*ga.selectionMethod.Select(rng, &population)).Chromosome()
+
+		// 2. crossover
+		child := ga.crossoverMethod.Crossover(rng, *parentA, *parentB)
+
+		// 3. mutation
+		// 	TODO
+		// ga.mutationMethod.Mutate(rng, &child)
+
+		var indiv individual.Individual
+		output[i] = indiv.Create(child)
 	}
 
-	return output
+	return output // , Statistic.New(population)
 }
