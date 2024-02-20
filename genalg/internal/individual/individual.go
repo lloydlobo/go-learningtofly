@@ -5,8 +5,8 @@ import (
 )
 
 type Individual interface {
-	Create(chromosome chromosome.Chromosome) Individual
-	Chromosome() *chromosome.Chromosome
+	Create(chromosome chromosome.Chromosome) Individual // individual from chromosome
+	Chromosome() *chromosome.Chromosome                 // individual to chromosome
 	Fitness() float32
 }
 
