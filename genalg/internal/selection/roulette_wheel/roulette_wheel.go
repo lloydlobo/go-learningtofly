@@ -2,8 +2,8 @@
 // for package selection's SelectionMethod.
 //
 // Reference:
-//   - See fitness proportionate selection (also known as roulette wheel selection)
-//     https://pwy.io/posts/learning-to-fly-pt3/#coding-selection.
+//   - See fitness proportionate selection (also known as roulette wheel
+//     selection) https://pwy.io/posts/learning-to-fly-pt3/#coding-selection.
 package roulettewheel
 
 import (
@@ -30,7 +30,8 @@ func (r *RouletteWheelSelection) Select(
 	// This is a naïve approach for demonstration purposes; a more
 	// efficient implementation could invoke `rng` just once
 	for {
-		// Intn -> a non-negative pseudo-random number in the half-open interval [0,n).
+		// Intn -> a non-negative pseudo-random number in the half-open interval
+		// [0,n).
 		indiv := (*population)[rng.Intn(len(*population))] // It panics if n <= 0.
 
 		indivShare := indiv.Fitness() / totalFitness
