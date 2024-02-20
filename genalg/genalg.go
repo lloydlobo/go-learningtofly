@@ -10,23 +10,19 @@ import (
 )
 
 type (
-	// SelectionMethod defines the type alias for selection methods.
-	SelectionMethod selection.SelectionMethod[individual.Individual]
-
 	// GeneticAlgorithm represents a genetic algorithm with selection, crossover, and mutation methods.
 	GeneticAlgorithm[S SelectionMethod] struct {
 		selectionMethod S                         // Selection algorithm generally remains identical for the whole simulation
 		crossoverMethod crossover.CrossoverMethod // Crossover happens on chromosomes
 		mutationMethod  mutation.MutationMethod
 	}
+
+	// SelectionMethod defines the type alias for selection methods.
+	SelectionMethod selection.SelectionMethod[individual.Individual]
 )
 
 // New creates a new instance of GeneticAlgorithm.
-func New[S SelectionMethod](
-	selector S,
-	crosser crossover.CrossoverMethod,
-	mutator mutation.MutationMethod,
-) GeneticAlgorithm[S] {
+func New[S SelectionMethod](selector S, crosser crossover.CrossoverMethod, mutator mutation.MutationMethod) GeneticAlgorithm[S] {
 	return GeneticAlgorithm[S]{
 		selectionMethod: selector,
 		crossoverMethod: crosser,
@@ -35,11 +31,7 @@ func New[S SelectionMethod](
 }
 
 // Evolve performs the evolution process on the given population.
-func (ga GeneticAlgorithm[S]) Evolve(
-	rng *rand.Rand,
-	population []individual.Individual,
-	fitnessFn func(indiv individual.Individual) float32,
-) []individual.Individual {
+func (ga GeneticAlgorithm[S]) Evolve(rng *rand.Rand, population []individual.Individual, fitnessFn func(indiv individual.Individual) float32) []individual.Individual {
 	populationCount := len(population)
 	if populationCount == 0 {
 		panic("expected population to not be empty")

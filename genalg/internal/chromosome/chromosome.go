@@ -12,11 +12,24 @@ func New(genes []float32) Chromosome {
 }
 
 // Len returns length of slice Genes of a Chromosome.
-func (c *Chromosome) Len() (geneCount uint) { return uint(len(c.Genes)) }
+func (c *Chromosome) Len() (geneCount uint) {
+	return uint(len(c.Genes))
+}
 
 // Index returns the gene float32 value of a Chromosome at index i.
-func (c *Chromosome) Index(i int) (gene float32) { return c.Genes[i] }
+func (c *Chromosome) Index(i int) (gene float32) {
+	return c.Genes[i]
+}
 
+// Sum calculates the sum of the genes in the chromosome.
+func (c *Chromosome) Sum() (sumGenes float32) {
+	for _, gene := range c.Genes {
+		sumGenes += gene
+	}
+	return
+}
+
+// Partial equality for Chromosome, to avoid funky floating-point surprises.
 func (c *Chromosome) ApproxEqual(other *Chromosome, tolerance float32) bool {
 	if len(c.Genes) != len(other.Genes) {
 		return false
@@ -24,7 +37,7 @@ func (c *Chromosome) ApproxEqual(other *Chromosome, tolerance float32) bool {
 
 	for i, gene := range c.Genes {
 		if math.Abs(float64(gene-other.Genes[i])) > float64(tolerance) {
-			return true
+			return false
 		}
 	}
 
