@@ -41,7 +41,10 @@ func NewTestIndividual(fitness float32) *TestIndividual {
 
 // return NewTestIndividual(0)
 func (TestIndividual) Create(chromosome chromosome.Chromosome) Individual {
-	return TestIndividual{chromosome: chromosome, fitness: 0}
+	if DBG_Enabled := false; DBG_Enabled { // maybe pass fitness to args?
+		return TestIndividual{chromosome: chromosome, fitness: 0}
+	}
+	return TestIndividual{chromosome: chromosome}
 }
 
 func (ti TestIndividual) Chromosome() *chromosome.Chromosome {

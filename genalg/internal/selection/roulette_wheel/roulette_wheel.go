@@ -40,7 +40,7 @@ func (r RouletteWheelSelection) Select(rng *rand.Rand, population *([]individual
 		}
 	}
 
-	selectedFitness := rand.Float32() * totalFitness
+	selectedFitness := rng.Float32() * totalFitness
 	cumulativeFitness := float32(0)
 	for _, indiv := range *population { //FIXME: is pointer to population in func args necessary?
 		cumulativeFitness += indiv.Fitness()

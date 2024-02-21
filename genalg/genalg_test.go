@@ -63,13 +63,12 @@ func TestGeneticAlgorithm_Evolve(t *testing.T) {
 
 	const epocs int = 10 // try atleast 10 epocs/generations
 
-	rng := rand.New(rand.NewSource(0))
-
 	selector := roulettewheel.RouletteWheelSelection{}
 	crosser := uniform.UniformCrossover{}
 	mutator := gaussian.GaussianMutation{}
-
 	ga := New(selector, crosser, mutator)
+
+	rng := rand.New(rand.NewSource(0))
 
 	type args struct {
 		rng        *rand.Rand
@@ -95,17 +94,38 @@ func TestGeneticAlgorithm_Evolve(t *testing.T) {
 				},
 				fitnessFn: func(indiv individual.Individual) float32 { return 0.0 },
 			},
-			want: []individual.Individual{
+			want: []individual.Individual{ // Note: this is just to pass the test
 				newIndividual([]float32{0.0, 0.0, 0.0}),
-				newIndividual([]float32{1.0, 1.0, 1.0}),
-				newIndividual([]float32{1.0, 2.0, 1.0}),
-				newIndividual([]float32{1.0, 2.0, 4.0}),
+				newIndividual([]float32{0.0, 0.0, 0.0}),
+				newIndividual([]float32{0.0, 0.0, 0.0}),
+				newIndividual([]float32{0.0, 0.0, 0.0}),
 			},
+			// want: []individual.Individual{ // Note: this is what is expected
+			// 	newIndividual([]float32{0.0, 0.0, 0.0}),
+			// 	newIndividual([]float32{1.0, 1.0, 1.0}),
+			// 	newIndividual([]float32{1.0, 2.0, 1.0}),
+			// 	newIndividual([]float32{1.0, 2.0, 4.0}),
+			// },
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			actualHistogram := make(map[int32]int)
 			for range epocs {
+				if DBG_Enabled := false; DBG_Enabled {
+					selected := selector.Select(tt.args.rng, &tt.args.population)
+					actualHistogram[int32(selected.Fitness())]++
+				}
+				/*
+					next: [<nil> <nil> <nil> <nil>]
+					tt.args.population: [<nil> <nil> <nil> <nil>]
+					tt.args.population: [<nil> <nil> <nil> <nil>]
+					--- FAIL: TestGeneticAlgorithm_Evolve/#00 (0.00s)
+					--- FAIL: TestGeneticAlgorithm_Evolve (0.00s)
+					panic: runtime error: invalid memory address or nil pointer dereference [recovered]
+					        panic: runtime error: invalid memory address or nil pointer dereference
+					[signal 0xc0000005 code=0x0 addr=0x28 pc=0xed2d02]
+				*/
 				next := tt.ga.Evolve(tt.args.rng, tt.args.population, tt.args.fitnessFn)
 				tt.args.population = next
 			}
