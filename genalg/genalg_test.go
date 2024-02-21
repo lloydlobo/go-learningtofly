@@ -1,6 +1,10 @@
 package genalg
 
 import (
+	"math/rand"
+	"reflect"
+	"testing"
+
 	"genalg/internal/chromosome"
 	"genalg/internal/crossover"
 	"genalg/internal/crossover/uniform"
@@ -8,9 +12,6 @@ import (
 	"genalg/internal/mutation"
 	"genalg/internal/mutation/gaussian"
 	roulettewheel "genalg/internal/selection/roulette_wheel"
-	"math/rand"
-	"reflect"
-	"testing"
 )
 
 func TestNew(t *testing.T) {
@@ -37,23 +38,28 @@ func TestNew(t *testing.T) {
 	}
 }
 
-/*
-	 Errorlogs:
-
-		- panic: test timed out after 30s
-			>>> Could it be the while loop? (NO)
-			>>> Only this is the failing test:
-					=== RUN   TestUniformCrossover_Crossover_Diff
-					--- FAIL: TestUniformCrossover_Crossover_Diff (0.00s)
-					panic: runtime error: invalid memory address or nil pointer dereference [recovered]
-							panic: runtime error: invalid memory address or nil pointer dereference
-					[signal 0xc0000005 code=0x0 addr=0x0 pc=0xb22617]
-			>> TODO: Make sure we check for more than 1 parent layers
-		-	--- FAIL: TestGeneticAlgorithm_Evolve (0.00s)
-			panic: runtime error: invalid memory address or nil pointer dereference [recovered]
-			        panic: runtime error: invalid memory address or nil pointer dereference
-			[signal 0xc0000005 code=0x0 addr=0x18 pc=0x3d2470]
-*/
+// Individuals get better and everything works as intended:
+//   - [x] Thanks to the roulette wheel selection, the worst solution - [0.0,
+//     0.0, 0.0] - was discarded.
+//   - [ ] Thanks to the uniform crossover, the average fitness score grew from
+//     3.5 to 7.0 (!)
+//   - [ ] Thanks to the Gaussian mutation, we see genes-numbers-that were not
+//     present in the initial population.
+//
+// Errorlogs:
+//   - panic: test timed out after 30s
+//     >>> Could it be the while loop? (NO)
+//     >>> Only this is the failing test:
+//     === RUN   TestUniformCrossover_Crossover_Diff
+//     --- FAIL: TestUniformCrossover_Crossover_Diff (0.00s)
+//     panic: runtime error: invalid memory address or nil pointer dereference [recovered]
+//     panic: runtime error: invalid memory address or nil pointer dereference
+//     [signal 0xc0000005 code=0x0 addr=0x0 pc=0xb22617]
+//     >> TODO: Make sure we check for more than 1 parent layers
+//   - --- FAIL: TestGeneticAlgorithm_Evolve (0.00s)
+//     panic: runtime error: invalid memory address or nil pointer dereference [recovered]
+//     panic: runtime error: invalid memory address or nil pointer dereference
+//     [signal 0xc0000005 code=0x0 addr=0x18 pc=0x3d2470]
 func TestGeneticAlgorithm_Evolve(t *testing.T) {
 	// Helper closure to create a few individuals at once.
 	newIndividual := func(genes []float32) (indiv individual.TestIndividual) {
@@ -89,8 +95,9 @@ func TestGeneticAlgorithm_Evolve(t *testing.T) {
 			args: args{
 				rng: rng,
 				population: []individual.Individual{
-					// FIXME: author's fitness for these individual may be achieved via TestIndividual enums setup properly.
-					// 		it's 0.0 for all right now.
+					// FIXME: author's fitness for these individual may be
+					// achieved via TestIndividual enums setup properly. 0.0 for
+					// all right now.
 					newIndividual([]float32{0.0, 0.0, 0.0}), // fitness = 0.0
 					newIndividual([]float32{1.0, 1.0, 1.0}), // fitness = 3.0
 					newIndividual([]float32{1.0, 2.0, 1.0}), // fitness = 4.0
@@ -98,8 +105,10 @@ func TestGeneticAlgorithm_Evolve(t *testing.T) {
 				},
 				fitnessFn: func(indiv individual.Individual) float32 { return 0.0 }, // stub unimplemented
 			},
-			// Note: using zeroed-out expected population initially. Also individual.Create does not take fitness as arg so expect zero-value fitness.
-			// NOTE: solved by using GaussianMutation{Chance:0.5,Coeff:0.5}
+			// Note: using zeroed-out expected population initially.
+			// Also individual Create does not take fitness as arg so expect
+			// zero-value fitness.
+			// Note: solved by using GaussianMutation{Chance:0.5,Coeff:0.5}
 			want: []individual.Individual{
 				newIndividual([]float32{-0.30737132, 0.038694657, -0.24632761}),
 				newIndividual([]float32{-0.30737132, 0.32855722, 0.11804612}),

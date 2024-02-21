@@ -49,13 +49,11 @@ func (ga GeneticAlgorithm) Evolve(
 	output := make([]individual.Individual, populationCount)
 
 	for i := range population {
-		// 1. Selection - roulette wheel: uses roulettewheel.RouletteWheel.Select()
-		selectorA := roulettewheel.RouletteWheelSelection{}
-		selectorB := roulettewheel.RouletteWheelSelection{}
-		selectedA := selectorA.Select(rng, &population)
-		selectedB := selectorB.Select(rng, &population)
-		parentA := selectedA.Chromosome() // parentA := ga.selectionMethod.Select(rng, &population).Chromosome()
-		parentB := selectedB.Chromosome() // parentB := ga.selectionMethod.Select(rng, &population).Chromosome()
+		// 1. Selection - roulette wheel
+		parentA := roulettewheel.RouletteWheelSelection{}.Select(rng, &population).Chromosome()
+		parentB := roulettewheel.RouletteWheelSelection{}.Select(rng, &population).Chromosome()
+		// parentA := ga.selectionMethod.Select(rng, &population).Chromosome()
+		// parentB := ga.selectionMethod.Select(rng, &population).Chromosome()
 
 		// 2. Crossover - uniform
 		child := ga.crossoverMethod.Crossover(rng, *parentA, *parentB)
@@ -66,19 +64,14 @@ func (ga GeneticAlgorithm) Evolve(
 		// Note: solving this error. supressed by using TestIndividual mock struct
 		// 		panic: runtime error: invalid memory address or nil pointer dereference [recovered]
 		// 		        panic: runtime error: invalid memory address or nil pointer dereference
-		/*
-			next: [<nil> <nil> <nil> <nil>]
-			tt.args.population: [<nil> <nil> <nil> <nil>]
-			tt.args.population: [<nil> <nil> <nil> <nil>]
-			--- FAIL: TestGeneticAlgorithm_Evolve/#00 (0.00s)
-			--- FAIL: TestGeneticAlgorithm_Evolve (0.00s)
-			panic: runtime error: invalid memory address or nil pointer dereference [recovered]
-			        panic: runtime error: invalid memory address or nil pointer dereference
-			[signal 0xc0000005 code=0x0 addr=0x28 pc=0xed2d02]
-		*/
+		//	--- FAIL: TestGeneticAlgorithm_Evolve/#00 (0.00s)
+		//	--- FAIL: TestGeneticAlgorithm_Evolve (0.00s)
+		//	panic: runtime error: invalid memory address or nil pointer dereference [recovered]
+		//	        panic: runtime error: invalid memory address or nil pointer dereference
+		//	[signal 0xc0000005 code=0x0 addr=0x28 pc=0xed2d02]
 
 		// Create individual with mutated chromosome
-		var indiv individual.TestIndividual // var indiv individual.Individual
+		var indiv individual.TestIndividual // Note: supressed error due to var indiv individual.Individual
 		output[i] = indiv.Create(child)
 	}
 
