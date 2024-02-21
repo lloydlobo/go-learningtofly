@@ -10,17 +10,14 @@ import (
 	roulettewheel "genalg/internal/selection/roulette_wheel"
 )
 
-type (
-	// GeneticAlgorithm represents a genetic algorithm with selection, crossover, and mutation methods.
-	GeneticAlgorithm struct {
-		selectionMethod selection.SelectionMethod[individual.Individual] // Selection algorithm generally remains identical for the whole simulation
-		crossoverMethod crossover.CrossoverMethod                        // Crossover happens on chromosomes
-		mutationMethod  mutation.MutationMethod
-	}
-
-	// SelectionMethod defines the type alias for selection methods.
-	SelectionMethod selection.SelectionMethod[individual.Individual]
-)
+// GeneticAlgorithm represents a genetic algorithm with selection, crossover, and mutation methods.
+type GeneticAlgorithm struct {
+	// Selection algorithm generally remains identical for the whole simulation
+	selectionMethod selection.SelectionMethod[individual.Individual]
+	// Crossover happens on chromosomes
+	crossoverMethod crossover.CrossoverMethod
+	mutationMethod  mutation.MutationMethod
+}
 
 // New creates a new instance of GeneticAlgorithm.
 func New(

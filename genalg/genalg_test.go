@@ -11,11 +11,14 @@ import (
 	"genalg/internal/individual"
 	"genalg/internal/mutation"
 	"genalg/internal/mutation/gaussian"
+	"genalg/internal/selection"
 	roulettewheel "genalg/internal/selection/roulette_wheel"
 )
 
 func TestNew(t *testing.T) {
-	type S SelectionMethod
+	// Note: Original has generics like implementation for this. Not used in our package for simplicity.
+	// But it can solve testing and usage when it comes to Individual interface.
+	type S selection.SelectionMethod[individual.Individual]
 
 	type args struct {
 		selector S
@@ -43,7 +46,7 @@ func TestNew(t *testing.T) {
 //     0.0, 0.0] - was discarded.
 //   - [ ] Thanks to the uniform crossover, the average fitness score grew from
 //     3.5 to 7.0 (!)
-//   - [ ] Thanks to the Gaussian mutation, we see genes-numbers-that were not
+//   - [x] Thanks to the Gaussian mutation, we see genes-numbers-that were not
 //     present in the initial population.
 //
 // Errorlogs:
@@ -69,14 +72,12 @@ func TestGeneticAlgorithm_Evolve(t *testing.T) {
 	}
 
 	const epocs int = 10 // try atleast 10 epocs/generations
+	rng := rand.New(rand.NewSource(0))
 
 	selector := roulettewheel.RouletteWheelSelection{}
 	crosser := uniform.UniformCrossover{}
 	mutator := gaussian.GaussianMutation{Chance: 0.5, Coeff: 0.5}
-
 	ga := New(selector, crosser, mutator)
-
-	rng := rand.New(rand.NewSource(0))
 
 	type args struct {
 		rng        *rand.Rand
@@ -90,7 +91,7 @@ func TestGeneticAlgorithm_Evolve(t *testing.T) {
 		want []individual.Individual
 	}{
 		{
-			name: "",
+			name: "discards the worst solution - [0.0, 0.0, 0.0]. gene numbers not present in original population",
 			ga:   ga,
 			args: args{
 				rng: rng,
@@ -103,13 +104,14 @@ func TestGeneticAlgorithm_Evolve(t *testing.T) {
 					newIndividual([]float32{1.0, 2.0, 1.0}), // fitness = 4.0
 					newIndividual([]float32{1.0, 2.0, 4.0}), // fitness = 7.0
 				},
-				fitnessFn: func(indiv individual.Individual) float32 { return 0.0 }, // stub unimplemented
+				// stub unimplemented anon func
+				fitnessFn: func(indiv individual.Individual) float32 { return 0.0 },
 			},
-			// Note: using zeroed-out expected population initially.
-			// Also individual Create does not take fitness as arg so expect
-			// zero-value fitness.
-			// Note: solved by using GaussianMutation{Chance:0.5,Coeff:0.5}
 			want: []individual.Individual{
+				// Note: using zeroed-out expected population initially.
+				// Also individual Create does not take fitness as arg so
+				// expect zero-value fitness.
+				// Note: solved by using GaussianMutation{Chance:0.5,Coeff:0.5}
 				newIndividual([]float32{-0.30737132, 0.038694657, -0.24632761}),
 				newIndividual([]float32{-0.30737132, 0.32855722, 0.11804612}),
 				newIndividual([]float32{-0.69411385, 0.22006679, 0.60720074}),
@@ -119,16 +121,20 @@ func TestGeneticAlgorithm_Evolve(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			for range epocs {
-				if dbgEnabled := false; dbgEnabled {
+
+			for range epocs { // evolve for n epocs/generations
+				if dbgTmpEnabled := false; dbgTmpEnabled {
+
 					for _, popul := range tt.args.population {
 						fitness := popul.Fitness()
 						t.Logf("fitness: %v\n", fitness)
 					}
 				}
+
 				next := tt.ga.Evolve(tt.args.rng, tt.args.population, tt.args.fitnessFn)
 				tt.args.population = next
 			}
+
 			if got := tt.args.population; !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GeneticAlgorithm.Evolve() = %v, want %v", got, tt.want)
 			}
