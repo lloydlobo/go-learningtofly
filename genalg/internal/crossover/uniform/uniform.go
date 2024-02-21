@@ -16,10 +16,10 @@ func New() *UniformCrossover {
 }
 
 // Crossover performs uniform crossover between two parent chromosomes.
-func (uc *UniformCrossover) Crossover(
+func (uc UniformCrossover) Crossover(
 	rng *rand.Rand,
 	parentA,
-	parentB *chromosome.Chromosome,
+	parentB chromosome.Chromosome,
 ) chromosome.Chromosome {
 	if na, nb := parentA.Len(), parentB.Len(); na != nb {
 		panic(fmt.Sprintf("parent chromosomes must have the same length: a: %v, b: %v", na, nb))

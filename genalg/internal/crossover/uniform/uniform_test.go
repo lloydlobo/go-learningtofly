@@ -1,6 +1,7 @@
 package uniform
 
 import (
+	"fmt"
 	"math/rand"
 	"reflect"
 	"testing"
@@ -24,11 +25,19 @@ func TestNew(t *testing.T) {
 	}
 }
 
+/*
+FIXME: Errorlog
+
+	=== RUN   TestUniformCrossover_Crossover_Diff
+	--- FAIL: TestUniformCrossover_Crossover_Diff (0.00s)
+	panic: runtime error: invalid memory address or nil pointer dereference [recovered]
+	        panic: runtime error: invalid memory address or nil pointer dereference
+	[signal 0xc0000005 code=0x0 addr=0x0 pc=0xb22617]
+*/
 func TestUniformCrossover_Crossover_Diff(t *testing.T) {
 	rng := rand.New(rand.NewSource(0))
 
 	var (
-		uc      *UniformCrossover
 		parentA chromosome.Chromosome
 		parentB chromosome.Chromosome
 	)
@@ -38,8 +47,12 @@ func TestUniformCrossover_Crossover_Diff(t *testing.T) {
 		parentA.Genes = append(parentA.Genes, float32(i+1))
 		parentB.Genes = append(parentB.Genes, -float32(i+1))
 	}
+	fmt.Printf("parentA: %v\n", parentA)
+	fmt.Printf("parentB: %v\n", parentB)
 
-	child := uc.Crossover(rng, &parentA, &parentB)
+	uc := UniformCrossover{}
+	child := uc.Crossover(rng, parentA, parentB)
+	fmt.Printf("child: %v\n", child)
 
 	// Number of genes different between `child` and `parentA`
 	var diffA int

@@ -17,5 +17,5 @@ import (
 )
 
 type SelectionMethod[I individual.Individual] interface {
-	Select(rng *rand.Rand, population *[]I) *I
+	Select(rng *rand.Rand, population *[]I) I
 }

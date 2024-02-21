@@ -38,11 +38,11 @@ func TestRouletteWheelSelection_Select(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var pop []individual.Individual // reflect.ValueOf(population)
+			var popul []individual.Individual // reflect.ValueOf(population)
 			for _, indiv := range *tt.args.population {
-				pop = append(pop, indiv)
+				popul = append(popul, indiv)
 			}
-			if got := tt.r.Select(tt.args.rng, &pop); !reflect.DeepEqual(got, tt.want) {
+			if got := tt.r.Select(tt.args.rng, &popul); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("RouletteWheelSelection.Select() = %v, want %v", got, tt.want)
 			}
 		})

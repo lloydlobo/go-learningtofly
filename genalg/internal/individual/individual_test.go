@@ -116,3 +116,153 @@ func TestTestIndividual_Fitness(t *testing.T) {
 		})
 	}
 }
+
+func TestNewTestIndividualWithChromosome(t *testing.T) {
+	type args struct {
+		chromosome chromosome.Chromosome
+	}
+	tests := []struct {
+		name string
+		args args
+		want Individual
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := NewTestIndividualWithChromosome(tt.args.chromosome); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewTestIndividualWithChromosome() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestTestIndividualWithChromosome_Create(t *testing.T) {
+	type args struct {
+		chromosome chromosome.Chromosome
+	}
+	tests := []struct {
+		name string
+		tr   TestIndividualWithChromosome
+		args args
+		want Individual
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.tr.Create(tt.args.chromosome); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("TestIndividualWithChromosome.Create() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestTestIndividualWithChromosome_Chromosome(t *testing.T) {
+	tests := []struct {
+		name string
+		iwc  TestIndividualWithChromosome
+		want *chromosome.Chromosome
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.iwc.Chromosome(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("TestIndividualWithChromosome.Chromosome() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestTestIndividualWithChromosome_Fitness(t *testing.T) {
+	tests := []struct {
+		name string
+		iwc  TestIndividualWithChromosome
+		want float32
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.iwc.Fitness(); got != tt.want {
+				t.Errorf("TestIndividualWithChromosome.Fitness() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestNewTestIndividualWithFitness(t *testing.T) {
+	type args struct {
+		fitness float32
+	}
+	tests := []struct {
+		name string
+		args args
+		want Individual
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := NewTestIndividualWithFitness(tt.args.fitness); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewTestIndividualWithFitness() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestTestIndividualWithFitness_Create(t *testing.T) {
+	type args struct {
+		chromosome chromosome.Chromosome
+	}
+	tests := []struct {
+		name string
+		tr   TestIndividualWithFitness
+		args args
+		want Individual
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.tr.Create(tt.args.chromosome); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("TestIndividualWithFitness.Create() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestTestIndividualWithFitness_Chromosome(t *testing.T) {
+	tests := []struct {
+		name string
+		iwf  TestIndividualWithFitness
+		want *chromosome.Chromosome
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.iwf.Chromosome(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("TestIndividualWithFitness.Chromosome() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestTestIndividualWithFitness_Fitness(t *testing.T) {
+	tests := []struct {
+		name string
+		iwf  TestIndividualWithFitness
+		want float32
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.iwf.Fitness(); got != tt.want {
+				t.Errorf("TestIndividualWithFitness.Fitness() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
