@@ -38,11 +38,22 @@ graph BT;
 
 ## TODO
 
-- [ ] implement all those functions that'll determine what a bird sees or how a
-  bird moves.
-  - In addition, for a fearless WebAssembly experience, we'll need two other tools:
-    - npm (like Cargo, but for JavaScript),
-    - wasm-pack (set of tools that make compiling Rust into WebAssembly easier).
+- [ ] _implement all those functions that'll determine what a bird sees or how a
+  bird moves._
+  - _In addition, for a fearless WebAssembly experience, we'll need two other tools:_
+    - _npm (like Cargo, but for JavaScript),_
+    - _wasm-pack (set of tools that make compiling Rust into WebAssembly easier)._
+- [ ] _This is a minor thing that I consider a good practice — by prefixing
+  workspace-crates, you reduce the risk of your local crate name-clashing with
+  something from crates.io.  
+  Say, we're about to create libs/rand — by calling it lib-rand instead of just
+  rand, we can avoid confusing other programmers who might stumble upon our code
+  in the future._
+  
+  Similar approaches include:
+  - prefixing with project's name (that's what rustc does, for example),
+  - prefixing with whatever else you want (e.g. local-foo or crate_foo),
+  - not prefixing at all (also valid!).
 
 ## References
 
