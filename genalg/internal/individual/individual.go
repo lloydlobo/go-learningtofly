@@ -25,15 +25,15 @@ type TestIndividual struct {
 
 	// or use  *chromosome.Chromosome
 
-	chromosome chromosome.Chromosome // Note: add this later
-	fitness    float32
+	ChromosomeValue chromosome.Chromosome // Note: add this later
+	FitnessValue    float32
 }
 
 // NewTestIndividual creates a new TestIndividual with the given fitness
 func NewTestIndividual(fitness float32) *TestIndividual {
 	return &TestIndividual{
-		chromosome: chromosome.Chromosome{}, // FIXME: chromosome is not set in initializer?
-		fitness:    fitness,
+		ChromosomeValue: chromosome.Chromosome{}, // FIXME: chromosome is not set in initializer?
+		FitnessValue:    fitness,
 	}
 }
 
@@ -42,17 +42,17 @@ func NewTestIndividual(fitness float32) *TestIndividual {
 // return NewTestIndividual(0)
 func (TestIndividual) Create(chromosome chromosome.Chromosome) Individual {
 	if DBG_Enabled := false; DBG_Enabled { // maybe pass fitness to args?
-		return TestIndividual{chromosome: chromosome, fitness: 0}
+		return TestIndividual{ChromosomeValue: chromosome, FitnessValue: 0}
 	}
-	return TestIndividual{chromosome: chromosome}
+	return TestIndividual{ChromosomeValue: chromosome}
 }
 
 func (ti TestIndividual) Chromosome() *chromosome.Chromosome {
-	return &ti.chromosome
+	return &ti.ChromosomeValue
 }
 
 func (ti TestIndividual) Fitness() float32 {
-	return ti.fitness
+	return ti.FitnessValue
 }
 
 // ===========================================================

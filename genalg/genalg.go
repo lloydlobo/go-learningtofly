@@ -63,9 +63,19 @@ func (ga GeneticAlgorithm) Evolve(
 		// 3. Mutation - gaussian
 		ga.mutationMethod.Mutate(rng, &child)
 
-		// FIXME: how to solve this error. supressed by using TestIndividual mock struct
+		// Note: solving this error. supressed by using TestIndividual mock struct
 		// 		panic: runtime error: invalid memory address or nil pointer dereference [recovered]
 		// 		        panic: runtime error: invalid memory address or nil pointer dereference
+		/*
+			next: [<nil> <nil> <nil> <nil>]
+			tt.args.population: [<nil> <nil> <nil> <nil>]
+			tt.args.population: [<nil> <nil> <nil> <nil>]
+			--- FAIL: TestGeneticAlgorithm_Evolve/#00 (0.00s)
+			--- FAIL: TestGeneticAlgorithm_Evolve (0.00s)
+			panic: runtime error: invalid memory address or nil pointer dereference [recovered]
+			        panic: runtime error: invalid memory address or nil pointer dereference
+			[signal 0xc0000005 code=0x0 addr=0x28 pc=0xed2d02]
+		*/
 
 		// Create individual with mutated chromosome
 		var indiv individual.TestIndividual // var indiv individual.Individual

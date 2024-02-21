@@ -20,8 +20,8 @@ func TestNewTestIndividual(t *testing.T) {
 			name: "NewTestIndividual creates a TestIndividual with the given fitness",
 			args: args{fitness: 0.5},
 			want: &TestIndividual{
-				chromosome: chromosome.Chromosome{},
-				fitness:    0.5,
+				ChromosomeValue: chromosome.Chromosome{},
+				FitnessValue:    0.5,
 			},
 		},
 	}
@@ -61,8 +61,8 @@ func TestTestIndividual_Create(t *testing.T) {
 			tr:   TestIndividual{},
 			args: args{chromosome: chromosome.Chromosome{Genes: []float32{0.1, 0.2, 0.3}}},
 			want: TestIndividual{
-				chromosome: chromosome.Chromosome{Genes: []float32{0.1, 0.2, 0.3}},
-				fitness:    0,
+				ChromosomeValue: chromosome.Chromosome{Genes: []float32{0.1, 0.2, 0.3}},
+				FitnessValue:    0,
 			},
 		},
 	}
@@ -83,7 +83,7 @@ func TestTestIndividual_Chromosome(t *testing.T) {
 	}{
 		{
 			name: "TestIndividual Chromosome returns the chromosome of the TestIndividual",
-			ti:   TestIndividual{chromosome: chromosome.Chromosome{Genes: []float32{0.1, 0.2, 0.3}}},
+			ti:   TestIndividual{ChromosomeValue: chromosome.Chromosome{Genes: []float32{0.1, 0.2, 0.3}}},
 			want: &chromosome.Chromosome{Genes: []float32{0.1, 0.2, 0.3}},
 		},
 	}
@@ -104,7 +104,7 @@ func TestTestIndividual_Fitness(t *testing.T) {
 	}{
 		{
 			name: "TestIndividual Fitness returns the fitness of the TestIndividual",
-			ti:   TestIndividual{fitness: 0.5},
+			ti:   TestIndividual{FitnessValue: 0.5},
 			want: 0.5,
 		},
 	}
