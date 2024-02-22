@@ -10,10 +10,33 @@ type Simulation struct {
 	World World // Our world is two-dimensional...
 }
 
+// Usage in JavaScript:
+//
+//	const world = simulation.world();
+//	--------------------- ^---^
+//	| Parsing already happens inside this automatically-generated
+//	| function - we do not have to do anything more in here.
+//	---
+//
+// returns a JSON:
+//
+//	{
+//	  "animals": [
+//	    { "x": 0.2, "y": 0.1 },
+//	    { "x": 0.3, "y": 0.7 }
+//	  ]
+//	}
 func (s *Simulation) Random(rng *rand.Rand) Simulation {
-	return Simulation{
-		World: s.World.Random(rng),
-	}
+	world := s.World.Random(rng)
+
+	// world=jsValueFromSerDe(world)
+	// ^
+	// | TODO
+	// | What happened is that instead of letting wasm-pack serialize our models
+	// | using its own serialization algorithm, we've forced them to be serialized
+	// | into JSON — via JsValue.
+
+	return Simulation{world}
 }
 
 // GetWorld implements a getter to access World from Simulation object's state.
