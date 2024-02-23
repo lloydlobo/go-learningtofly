@@ -9,6 +9,50 @@ const world = simulation.world();
 
 console.log(world);
 
+CanvasRenderingContext2D.prototype = {
+  /**
+   * Draws a triangle on the canvas.
+   *
+   * @param {number} x - The X coordinate of the top-left corner of the triangle.
+   * @param {number} y - The Y coordinate of the top-left corner of the triangle.
+   * @param {number} size - The length of the sides of the triangle.
+   * @param {number} rotation - The rotation angle of the triangle.
+   * @example ctx.drawTriangle(x*canvas.width, y*canvas.height, 0.01*canvas.width, Math.PI / 4);
+   */
+  drawTriangle: function (x, y, size, rotation) {
+    /**
+     * Triangle is hard to spot when rotated so we extruded one of the vertices.
+     * @const {number}
+     */
+    const extrudeFactor = 1.5;
+
+    this.beginPath();
+
+    this.moveTo(
+      x - Math.sin(rotation) * size * extrudeFactor,
+      y + Math.cos(rotation) * size * extrudeFactor
+    );
+
+    // Instead of + 4.0 / 3.0, we could've also used - 2.0 / 3.0
+    // (meaning "60° counterclockwise from the top vertex"):
+    this.lineTo(
+      x - Math.sin(rotation + (2.0 / 3.0) * Math.PI) * size,
+      y + Math.cos(rotation + (2.0 / 3.0) * Math.PI) * size
+    );
+    this.lineTo(
+      x - Math.sin(rotation + (4.0 / 3.0) * Math.PI) * size,
+      y + Math.cos(rotation + (4.0 / 3.0) * Math.PI) * size
+    );
+
+    this.lineTo(
+      x - Math.sin(rotation) * size * extrudeFactor,
+      y + Math.cos(rotation) * size * extrudeFactor
+    );
+
+    this.stroke();
+  },
+};
+
 /** @type {HTMLCanvasElement|null} */
 const viewport = document.getElementById("viewport");
 // ------------- ^------^
@@ -75,7 +119,13 @@ ctx.scale(viewportScale, viewportScale);
 ctx.fillStyle = "rgb(0, 0, 0);";
 
 for (const animal of simulation.world().animals) {
-  ctx.fillRect(animal.x * viewportWidth, animal.y * viewportHeight, 15, 15);
+  ctx.drawTriangle(
+    animal.x * viewportWidth,
+    animal.y * viewportHeight,
+    0.01 * viewportWidth,
+    animal.rotation
+  );
+  // ctx.fillRect(animal.x * viewportWidth, animal.y * viewportHeight, 15, 15);
   // ---------- X   Y   W    H
   // | Draws rectangle filled with color determined by `fillStyle`.
   // |
@@ -87,21 +137,3 @@ for (const animal of simulation.world().animals) {
   // | (unit: pixels)
   // ---
 }
-
-/**
- * Draws a triangle on the canvas.
- * @param {number} x - The X coordinate of the top-left corner of the triangle.
- * @param {number} y - The Y coordinate of the top-left corner of the triangle.
- * @param {number} size - The length of the sides of the triangle.
- * @example ctx.drawTriangle(x*canvas.width, y*canvas.height, 0.01*canvas.width)
- */
-CanvasRenderingContext2D.prototype.drawTriangle = function (x, y, size) {
-  this.beginPath();
-  this.moveTo(x, y);
-  this.lineTo(x + size, y + size);
-  this.lineTo(x - size, y - size);
-  this.lineTo(x, y);
-
-  this.fillStyle = "rgb(0, 0, 0)";
-  this.fill();
-};

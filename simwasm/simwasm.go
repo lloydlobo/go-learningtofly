@@ -71,13 +71,18 @@ func (World) FromCoreWorld(world *simcore.World) World {
 }
 
 type Animal struct {
-	X float32
-	Y float32
+	X        float32
+	Y        float32
+	Rotation float32
 }
 
 // FromCoreAnimal implements conversion of *simcore.Animal to Animal.
 func (Animal) FromCoreAnimal(animal *simcore.Animal) Animal {
-	return Animal{animal.Position.X, animal.Position.Y}
+	return Animal{
+		animal.GetPosition().X,
+		animal.GetPosition().Y,
+		animal.GetRotation().Angle(),
+	}
 }
 
 // ^ This model is smaller than `lib_simulation::Animal` (`simcore.Animal`) -

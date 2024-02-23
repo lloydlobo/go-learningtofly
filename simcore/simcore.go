@@ -163,6 +163,13 @@ func NewRotation2(angle float32) Rotation2 {
 	return Rotation2(angle)
 }
 
+func (r Rotation2) Angle() float32 {
+	// Note: Is Rotation2 correctly implemented?
+	// | Is Rotation2 a struct or just a type like enum?
+	// |---v--------v
+	return float32(r)
+}
+
 type Point2 struct {
 	X float32
 	Y float32
