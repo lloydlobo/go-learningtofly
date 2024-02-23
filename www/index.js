@@ -1,12 +1,6 @@
-// FIXME: unimplemented
 import * as simwasm from "simwasm";
 
 const simulation = new simwasm.Simulation();
-// --------------- ^-^
-// | For all practical purposes, this is a fancy syntax for Rust's:
-// | `Simulation::new()`
-// ---
-
 const world = simulation.world();
 // --------------------- ^---^
 // | Parsing already happens inside this automatically-generated
@@ -15,6 +9,7 @@ const world = simulation.world();
 
 console.log(world);
 
+/** @type {HTMLCanvasElement|null} */
 const viewport = document.getElementById("viewport");
 // ------------- ^------^
 // | `document` is a global object that allows to access and modify
@@ -66,12 +61,15 @@ viewport.height = viewportHeight * viewportScale;
 // |   | (size: viewport.width & viewport.height)
 // |   |
 // -----
-// TODO:
-// v... = ...
-// v... = ...
+viewport.style.width = viewportWidth + "px";
+viewport.style.height = viewportHeight + "px";
 
 /** @type {CanvasRenderingContext2D} */
 const ctx = viewport.getContext("2d");
+
+// Automatically scales all operations by `viewportScale` - otherwise
+// we'd have to `* viewportScale` everything by hand
+ctx.scale(viewportScale, viewportScale);
 
 // Determines color of the upcoming shape.
 ctx.fillStyle = "rgb(0, 0, 0);";
@@ -89,3 +87,21 @@ for (const animal of simulation.world().animals) {
   // | (unit: pixels)
   // ---
 }
+
+/**
+ * Draws a triangle on the canvas.
+ * @param {number} x - The X coordinate of the top-left corner of the triangle.
+ * @param {number} y - The Y coordinate of the top-left corner of the triangle.
+ * @param {number} size - The length of the sides of the triangle.
+ * @example ctx.drawTriangle(x*canvas.width, y*canvas.height, 0.01*canvas.width)
+ */
+CanvasRenderingContext2D.prototype.drawTriangle = function (x, y, size) {
+  this.beginPath();
+  this.moveTo(x, y);
+  this.lineTo(x + size, y + size);
+  this.lineTo(x - size, y - size);
+  this.lineTo(x, y);
+
+  this.fillStyle = "rgb(0, 0, 0)";
+  this.fill();
+};
