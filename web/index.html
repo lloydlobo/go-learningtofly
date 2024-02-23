@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Go - Learning To Fly</title>
+        <link rel="stylesheet" href="style.css" />
+        <script src="index.js" type="module"></script>
+        <!-- <script src="./bootstrap.js"></script> -->
+        <script src="static/js/wasm_exec.js"></script>
+        <script>
+            // Reference:
+            //  - https://eremeev.ca/posts/golang-wasm-working-with-form/#loading-in-the-browser
+            //
+            // Error:
+            //  - `Uncaught ReferenceError: Go is not defined:`
+            //    browser needs a guide on how to execute the compiled into WebAssembly golang application. Happily, it shipped with Go. Please don’t move it, but copy it!
+            //    `cd` into static/js/ directory and execute this command:
+            //          cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" $PWD
+            const go = new Go();
+            console.log({ go });
+            console.log(go.importObject);
+            WebAssembly.instantiateStreaming(
+                fetch("static/js/simwasm.wasm"),
+                go.importObject
+            ).then((result) => {
+                console.log({ result });
+                go.run(result.instance);
+            });
+        </script>
+    </head>
+
+    <body>
+        <div id="container">
+            <div id="terminal-panel" class="panel">
+                <textarea
+                    name="terminal standard out"
+                    id="terminal-stdout"
+                    data-commented-cols="30"
+                    data-commented-rows="10"
+                    readonly
+                ></textarea>
+                <input
+                    type="text"
+                    name="terminal standard in"
+                    id="terminal-stdin"
+                />
+            </div>
+            <div id="viewport-panel" class="panel">
+                <canvas id="viewport" width="800" height="800"></canvas>
+            </div>
+        </div>
+    </body>
+</html>

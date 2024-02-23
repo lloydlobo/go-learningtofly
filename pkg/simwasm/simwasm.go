@@ -6,7 +6,7 @@ import (
 	"simcore"
 )
 
-// #[wasm_bindgen]
+// #//[wasm_bindgen]
 type Simulation struct {
 	Rng *rand.Rand
 	Sim simcore.Simulation

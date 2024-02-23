@@ -1,4 +1,5 @@
-import * as simwasm from "simwasm";
+console.log("from index.js");
+import * as simwasm from "/static/js/symwasm.wasm";
 
 const simulation = new simwasm.Simulation();
 const world = simulation.world();
@@ -10,47 +11,47 @@ const world = simulation.world();
 console.log(world);
 
 CanvasRenderingContext2D.prototype = {
-  /**
-   * Draws a triangle on the canvas.
-   *
-   * @param {number} x - The X coordinate of the top-left corner of the triangle.
-   * @param {number} y - The Y coordinate of the top-left corner of the triangle.
-   * @param {number} size - The length of the sides of the triangle.
-   * @param {number} rotation - The rotation angle of the triangle.
-   * @example ctx.drawTriangle(x*canvas.width, y*canvas.height, 0.01*canvas.width, Math.PI / 4);
-   */
-  drawTriangle: function (x, y, size, rotation) {
     /**
-     * Triangle is hard to spot when rotated so we extruded one of the vertices.
-     * @const {number}
+     * Draws a triangle on the canvas.
+     *
+     * @param {number} x - The X coordinate of the top-left corner of the triangle.
+     * @param {number} y - The Y coordinate of the top-left corner of the triangle.
+     * @param {number} size - The length of the sides of the triangle.
+     * @param {number} rotation - The rotation angle of the triangle.
+     * @example ctx.drawTriangle(x*canvas.width, y*canvas.height, 0.01*canvas.width, Math.PI / 4);
      */
-    const extrudeFactor = 1.5;
+    drawTriangle: function (x, y, size, rotation) {
+        /**
+         * Triangle is hard to spot when rotated so we extruded one of the vertices.
+         * @const {number}
+         */
+        const extrudeFactor = 1.5;
 
-    this.beginPath();
+        this.beginPath();
 
-    this.moveTo(
-      x - Math.sin(rotation) * size * extrudeFactor,
-      y + Math.cos(rotation) * size * extrudeFactor
-    );
+        this.moveTo(
+            x - Math.sin(rotation) * size * extrudeFactor,
+            y + Math.cos(rotation) * size * extrudeFactor
+        );
 
-    // Instead of + 4.0 / 3.0, we could've also used - 2.0 / 3.0
-    // (meaning "60° counterclockwise from the top vertex"):
-    this.lineTo(
-      x - Math.sin(rotation + (2.0 / 3.0) * Math.PI) * size,
-      y + Math.cos(rotation + (2.0 / 3.0) * Math.PI) * size
-    );
-    this.lineTo(
-      x - Math.sin(rotation + (4.0 / 3.0) * Math.PI) * size,
-      y + Math.cos(rotation + (4.0 / 3.0) * Math.PI) * size
-    );
+        // Instead of + 4.0 / 3.0, we could've also used - 2.0 / 3.0
+        // (meaning "60° counterclockwise from the top vertex"):
+        this.lineTo(
+            x - Math.sin(rotation + (2.0 / 3.0) * Math.PI) * size,
+            y + Math.cos(rotation + (2.0 / 3.0) * Math.PI) * size
+        );
+        this.lineTo(
+            x - Math.sin(rotation + (4.0 / 3.0) * Math.PI) * size,
+            y + Math.cos(rotation + (4.0 / 3.0) * Math.PI) * size
+        );
 
-    this.lineTo(
-      x - Math.sin(rotation) * size * extrudeFactor,
-      y + Math.cos(rotation) * size * extrudeFactor
-    );
+        this.lineTo(
+            x - Math.sin(rotation) * size * extrudeFactor,
+            y + Math.cos(rotation) * size * extrudeFactor
+        );
 
-    this.stroke();
-  },
+        this.stroke();
+    },
 };
 
 /** @type {HTMLCanvasElement|null} */
@@ -119,21 +120,21 @@ ctx.scale(viewportScale, viewportScale);
 ctx.fillStyle = "rgb(0, 0, 0);";
 
 for (const animal of simulation.world().animals) {
-  ctx.drawTriangle(
-    animal.x * viewportWidth,
-    animal.y * viewportHeight,
-    0.01 * viewportWidth,
-    animal.rotation
-  );
-  // ctx.fillRect(animal.x * viewportWidth, animal.y * viewportHeight, 15, 15);
-  // ---------- X   Y   W    H
-  // | Draws rectangle filled with color determined by `fillStyle`.
-  // |
-  // | X = position on the X axis (left-to-right)
-  // | Y = position on the Y axis (top-to-bottom)
-  // | W = width
-  // | X = height
-  // |
-  // | (unit: pixels)
-  // ---
+    ctx.drawTriangle(
+        animal.x * viewportWidth,
+        animal.y * viewportHeight,
+        0.01 * viewportWidth,
+        animal.rotation
+    );
+    // ctx.fillRect(animal.x * viewportWidth, animal.y * viewportHeight, 15, 15);
+    // ---------- X   Y   W    H
+    // | Draws rectangle filled with color determined by `fillStyle`.
+    // |
+    // | X = position on the X axis (left-to-right)
+    // | Y = position on the Y axis (top-to-bottom)
+    // | W = width
+    // | X = height
+    // |
+    // | (unit: pixels)
+    // ---
 }
