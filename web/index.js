@@ -2,7 +2,7 @@ console.log("from index.js");
 import * as simwasm from "/static/js/symwasm.wasm";
 
 const simulation = new simwasm.Simulation();
-const world = simulation.world();
+const world = simulation.World();
 // --------------------- ^---^
 // | Parsing already happens inside this automatically-generated
 // | function - we don't have to do anything more in here.
@@ -10,48 +10,62 @@ const world = simulation.world();
 
 console.log(world);
 
-CanvasRenderingContext2D.prototype = {
+/**
+ * Draws a triangle on the canvas.
+ *
+ * @param {number} x - The X coordinate of the top-left corner of the triangle.
+ * @param {number} y - The Y coordinate of the top-left corner of the triangle.
+ * @param {number} size - The length of the sides of the triangle.
+ * @param {number} rotation - The rotation angle of the triangle.
+ * @example ctx.drawTriangle(x*canvas.width, y*canvas.height, 0.01*canvas.width, Math.PI / 4);
+ */
+CanvasRenderingContext2D.prototype.drawTriangle = function (
+    x,
+    y,
+    size,
+    rotation
+) {
     /**
-     * Draws a triangle on the canvas.
-     *
-     * @param {number} x - The X coordinate of the top-left corner of the triangle.
-     * @param {number} y - The Y coordinate of the top-left corner of the triangle.
-     * @param {number} size - The length of the sides of the triangle.
-     * @param {number} rotation - The rotation angle of the triangle.
-     * @example ctx.drawTriangle(x*canvas.width, y*canvas.height, 0.01*canvas.width, Math.PI / 4);
+     * Triangle is hard to spot when rotated so we extruded one of the vertices.
+     * @const {number}
      */
-    drawTriangle: function (x, y, size, rotation) {
-        /**
-         * Triangle is hard to spot when rotated so we extruded one of the vertices.
-         * @const {number}
-         */
-        const extrudeFactor = 1.5;
+    const extrudeFactor = 1.5;
 
-        this.beginPath();
+    this.beginPath();
 
-        this.moveTo(
-            x - Math.sin(rotation) * size * extrudeFactor,
-            y + Math.cos(rotation) * size * extrudeFactor
-        );
+    this.moveTo(
+        x - Math.sin(rotation) * size * extrudeFactor,
+        y + Math.cos(rotation) * size * extrudeFactor
+    );
 
-        // Instead of + 4.0 / 3.0, we could've also used - 2.0 / 3.0
-        // (meaning "60° counterclockwise from the top vertex"):
-        this.lineTo(
-            x - Math.sin(rotation + (2.0 / 3.0) * Math.PI) * size,
-            y + Math.cos(rotation + (2.0 / 3.0) * Math.PI) * size
-        );
-        this.lineTo(
-            x - Math.sin(rotation + (4.0 / 3.0) * Math.PI) * size,
-            y + Math.cos(rotation + (4.0 / 3.0) * Math.PI) * size
-        );
+    // Instead of + 4.0 / 3.0, we could've also used - 2.0 / 3.0
+    // (meaning "60° counterclockwise from the top vertex"):
+    this.lineTo(
+        x - Math.sin(rotation + (2.0 / 3.0) * Math.PI) * size,
+        y + Math.cos(rotation + (2.0 / 3.0) * Math.PI) * size
+    );
+    this.lineTo(
+        x - Math.sin(rotation + (4.0 / 3.0) * Math.PI) * size,
+        y + Math.cos(rotation + (4.0 / 3.0) * Math.PI) * size
+    );
 
-        this.lineTo(
-            x - Math.sin(rotation) * size * extrudeFactor,
-            y + Math.cos(rotation) * size * extrudeFactor
-        );
+    this.lineTo(
+        x - Math.sin(rotation) * size * extrudeFactor,
+        y + Math.cos(rotation) * size * extrudeFactor
+    );
 
-        this.stroke();
-    },
+    this.stroke(); // FIXME: remove stroke if we are filling?
+    this.fillStyle = "rgb(255, 255, 255)"; // white
+    this.fill();
+};
+
+CanvasRenderingContext2D.prototype.drawCircle = function (x, y, radius) {
+    this.beginPath();
+
+    this.arc(x, y, radius, 0, 2.0 * Math.PI);
+
+    this.fillStyle = "rgb(0, 255, 128)"; // green
+    this.fill();
 };
 
 /** @type {HTMLCanvasElement|null} */
@@ -119,7 +133,8 @@ ctx.scale(viewportScale, viewportScale);
 // Determines color of the upcoming shape.
 ctx.fillStyle = "rgb(0, 0, 0);";
 
-for (const animal of simulation.world().animals) {
+// FIXME: is this supposed to be in func redraw()?
+for (const animal of simulation.World().Animals) {
     ctx.drawTriangle(
         animal.x * viewportWidth,
         animal.y * viewportHeight,
@@ -138,3 +153,36 @@ for (const animal of simulation.world().animals) {
     // | (unit: pixels)
     // ---
 }
+
+function redraw() {
+    ctx.clearRect(0, 0, viewportWidth, viewportHeight);
+
+    simulation.Step();
+
+    const world = simulation.World();
+
+    for (const food of world.Foods) {
+        ctx.drawCircle(
+            food.X * viewportWidth,
+            food.Y * viewportHeight,
+            (0.01 / 2.0) * viewportWidth
+        );
+    }
+
+    for (const animal of world.Animals) {
+        ctx.drawTriangle(
+            animal.x * viewportWidth,
+            animal.y * viewportHeight,
+            0.01 * viewportWidth,
+            animal.rotation
+        );
+    }
+
+    // requestAnimationFrame() schedules code only for the next frame.
+    //
+    // Because we want for our simulation to continue forever, we've
+    // gotta keep re-scheduling our function:
+    requestAnimationFrame(redraw);
+}
+
+redraw();

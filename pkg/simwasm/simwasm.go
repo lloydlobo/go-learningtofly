@@ -32,6 +32,11 @@ func (s *Simulation) World() World {
 	return World{}.FromCoreWorld(&s.Sim.World)
 }
 
+// Step performs a single step - a single second, of simulation.
+func (s *Simulation) Step() {
+	s.Sim.Step()
+}
+
 // func (s Simulation) wasm_bindgen() {
 // 	// wasm_bindgen implementation for Simulation goes here
 // }
@@ -48,26 +53,25 @@ func (s *Simulation) World() World {
 
 type World struct {
 	Animals []Animal
-	// 	 ^
-	// 	 |
-	// 	error[E0277]: the trait bound `Box<[Animal]>: IntoWasmAbi` is not
-	//               satisfied
-	//  --> libs/simulation-wasm/src/lib.rs
-	//   |
-	// 3 | #[wasm_bindgen]
-	//   | ^^^^^^^^^^^^^^^ the trait `IntoWasmAbi` is not implemented for
-	//   |                 `Box<[Animal]>`
+	Foods   []Food
 }
 
 // FromCoreWorld implements conversion of *simcore.World to World.
 func (World) FromCoreWorld(world *simcore.World) World {
 	animals := make([]Animal, 0)
+	foods := make([]Food, 0)
 
 	for _, a := range world.Animals {
 		animals = append(animals, Animal{}.FromCoreAnimal(&a))
 	}
+	for _, f := range world.Foods {
+		foods = append(foods, Food{}.FromCoreFood(&f))
+	}
 
-	return World{animals}
+	return World{
+		Animals: animals,
+		Foods:   foods,
+	}
 }
 
 type Animal struct {
@@ -88,3 +92,16 @@ func (Animal) FromCoreAnimal(animal *simcore.Animal) Animal {
 // ^ This model is smaller than `lib_simulation::Animal` (`simcore.Animal`) -
 // | that's because a bird's position is all we need on the JavaScript's
 // | side at the moment; there's no need to map rest of the fields.
+
+type Food struct {
+	X float32
+	Y float32
+}
+
+// FromCoreFood implements conversion of *simcore.Food to Food.
+func (Food) FromCoreFood(food *simcore.Food) Food {
+	return Food{
+		food.GetPosition().X,
+		food.GetPosition().Y,
+	}
+}

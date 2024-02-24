@@ -44,6 +44,63 @@ func (s *Simulation) GetWorld(rng *rand.Rand) *World {
 	return &s.World
 }
 
+// (if num < min: return max) or (if num > max: return min)
+func wrap(num, min, max float32) float32 {
+	if num < min {
+		return max
+	} else if num > min {
+		return min
+	}
+
+	return num
+	// | wrap() Faster inline usage:
+	// |     x := s.World.Animals[i].Position.X
+	// |     y := s.World.Animals[i].Position.Y
+	// |     if x < min {
+	// |     	s.World.Animals[i].Position.X = max
+	// |     } else if x > max {
+	// |     	s.World.Animals[i].Position.X = min
+	// |     }
+	// |     if y < min {
+	// |     	s.World.Animals[i].Position.Y = max
+	// |     } else if y > max {
+	// |     	s.World.Animals[i].Position.Y = min
+	// |     }
+}
+
+// Step performs a single step - a single second, of simulation.
+//
+// Reference: https://pwy.io/posts/learning-to-fly-pt4/#stepping-stones
+func (s *Simulation) Step() {
+	// Our map is bounded by <0.0,1.0>, anything beyond those coordinates
+	// can exist, but rendered outside canvas.
+	const (
+		min = 0.0
+		max = 1.0
+	)
+
+	for i, animal := range s.World.Animals {
+		rotation, speed := float64(animal.Rotation), float64(animal.Speed)
+		dx, dy := math.Cos(rotation)*speed, math.Sin(rotation)*speed
+
+		s.World.Animals[i].Position.X += float32(dx)
+		s.World.Animals[i].Position.Y += float32(dy)
+
+		s.World.Animals[i].Position.X = wrap(s.World.Animals[i].Position.X, min, max)
+		s.World.Animals[i].Position.Y = wrap(s.World.Animals[i].Position.Y, min, max)
+	}
+	// ^
+	// | 	animal.Position += animal.Rotation * animal.Speed
+	// | fix with nabgebra:    ^----------------------------^
+	// |	animal.position += animal.rotation * na::Vector2::new(0.0, animal.speed);
+	// |
+	// | `::new(0.0, animal.speed)` says that: We're interested in rotating
+	// | relative to the Y axis, that is: a bird with rotation of 0° will fly upwards.
+	// | This decision neatly aligns with how we render triangles on <canvas>;
+	// | we might've as well done e.g. ::new(-animal.speed, 0.0) and adjust our
+	// | drawTriangle() to account for that.
+}
+
 // wasm-bindgen doesn't currently support exporting vectors of custom types.
 //
 // Even if it did, it's essential to maintain separation of concerns.
