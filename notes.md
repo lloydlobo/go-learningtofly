@@ -58,4 +58,5 @@ graph BT;
 ## References
 
 - learning-to-fly series: <https://pwy.io/posts/learning-to-fly-pt1/>
+  - repository: <https://github.com/patryk27/shorelark>
 - Go Workspaces: <https://go.dev/doc/tutorial/workspaces>
