@@ -71,12 +71,50 @@ func wrap(num, min, max float32) float32 {
 // Step performs a single step - a single second, of simulation.
 //
 // Reference: https://pwy.io/posts/learning-to-fly-pt4/#stepping-stones
-func (s *Simulation) Step() {
-	// Our map is bounded by <0.0,1.0>, anything beyond those coordinates
-	// can exist, but rendered outside canvas.
+func (s *Simulation) Step(rng *rand.Rand) {
+	processCollisions(s, rng)
+	processMovements(s)
+}
+
+// hit-testing:
+//
+// process of checking whether two polygons collide:
+//   - Birds are triangles, Foods are circles
+//   - but triangle circle collision hit-testing is complex.
+//
+// circle-circle hit-testing:
+//
+// We can keep drawing birds as tringles, but assume them as circles.
+// So circle-circle hit testing relies on checking if distance between two
+// circles is shorter or equal than the sum of their radii.
+//
+//	distance(A,B) >  radius(A) + radius(B) -> no collison
+//	distance(A,B) <= radius(A) + radius(B) -> no collison
+//
+// A distance of 0.5 -> animal and food are half a map apart from each other,
+// while distance of 0.0 -> animal and food are at exact same coordinates.
+//
+// Reference: https://pwy.io/posts/learning-to-fly-pt4/#ur-somebody-else
+func processCollisions(s *Simulation, rng *rand.Rand) {
+	const foodRadius float32 = 0.01
+
+	for _, animal := range s.World.Animals {
+		for j, food := range s.World.Foods {
+			distance := (Point2{}).Distance(&animal.Position, &food.Position)
+
+			if animalCollidesWithFood := distance <= foodRadius; animalCollidesWithFood {
+				s.World.Foods[j].Position = (Point2{}).Random(rng)
+			}
+		}
+	}
+}
+
+func processMovements(s *Simulation) {
 	const (
 		min = 0.0
 		max = 1.0
+		// Our map is bounded by <0.0,1.0>, anything beyond those coordinates
+		// can exist, but rendered outside canvas.
 	)
 
 	for i, animal := range s.World.Animals {
@@ -239,3 +277,9 @@ func (p *Point2) Sub(other *Point2) Point2        { return Point2{p.X - other.X,
 func (p *Point2) Dot(other *Point2) Point2        { return Point2{p.X * other.X, p.Y * other.Y} }
 func (p *Point2) MulScalar(scalar float32) Point2 { return Point2{p.X * scalar, p.Y * scalar} }
 func (p *Point2) Length() float32                 { return float32(math.Sqrt(float64(p.X*p.X + p.Y*p.Y))) }
+
+func (Point2) Distance(p1, p2 *Point2) float32 {
+	dx := math.Abs(float64(p1.X) - float64(p2.X))
+	dy := math.Abs(float64(p1.Y) - float64(p2.Y))
+	return float32(math.Sqrt(dx + dy))
+}

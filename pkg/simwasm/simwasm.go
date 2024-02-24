@@ -34,7 +34,7 @@ func (s *Simulation) World() World {
 
 // Step performs a single step - a single second, of simulation.
 func (s *Simulation) Step() {
-	s.Sim.Step()
+	s.Sim.Step(s.Rng)
 }
 
 // func (s Simulation) wasm_bindgen() {
