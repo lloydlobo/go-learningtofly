@@ -8,17 +8,21 @@ package main
 
 import (
 	"fmt"
+	"syscall/js"
 	// "wasmgo/internal/dom"
 )
 
 func main() {
 	fmt.Println("simwasm/main says: Hello, world!")
+	document := js.Global().Get("document")
+	document.Call("getElementById", "loading").Get("style").Call("setProperty", "display", "none")
 
 	// ---
 	// | document := js.Global().Get("document")
 	// | document.Call("getElementById", "loading").Get("style").Call("setProperty", "display", "none")
 	// | document.Call("getElementById", "calc").Get("style").Call("setProperty", "display", "flex") // set it to block
 	// v
+
 	// |	dom.Hide("loading")
 	// |	dom.Show("calc", "inline-flex")
 	// |
@@ -46,18 +50,18 @@ func main() {
 	// |		}
 	// |	}
 	// |
-	// |	ch := make(chan struct{})
-	// |	<-ch // OR use <-make(chan bool)
-	// |	// ^
-	// |	// | Uncaught Error: Go program has already exited
-	// |	// | 	at globalThis.Go._resume (wasm_exec.js:543:11)
-	// |	// | 	at HTMLInputElement.<anonymous> (wasm_exec.js:556:8)
-	// |	// |
-	// |	// | Program executes and exits, so when we try to invoke my event handler,
-	// |	// | there's no process to do that. So, we need some way to keep the program
-	// |	// | running. we'll do this by creating a channel, waiting for an event on it, but
-	// |	// | never sending one.
-	// |	// ---
+	ch := make(chan struct{})
+	<-ch // OR use <-make(chan bool)
+	// ^
+	// | Uncaught Error: Go program has already exited
+	// | 	at globalThis.Go._resume (wasm_exec.js:543:11)
+	// | 	at HTMLInputElement.<anonymous> (wasm_exec.js:556:8)
+	// |
+	// | Program executes and exits, so when we try to invoke my event handler,
+	// | there's no process to do that. So, we need some way to keep the program
+	// | running. we'll do this by creating a channel, waiting for an event on it, but
+	// | never sending one.
+	// ---
 }
 
 // | func calculate() {

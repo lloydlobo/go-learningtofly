@@ -17,14 +17,11 @@
             //    `cd` into static/js/ directory and execute this command:
             //          cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" $PWD
             const go = new Go();
-            console.log({ go });
-            console.log(go.importObject);
             WebAssembly.instantiateStreaming(
                 fetch("static/js/page.wasm"),
                 go.importObject
-            ).then((result) => {
-                console.log({ result });
-                go.run(result.instance);
+            ).then((results) => {
+                go.run(results.instance);
             });
         </script>
         <script defer src="index.js" type="application/wasm"></script>
@@ -32,24 +29,34 @@
     </head>
 
     <body>
-        <div id="container">
-            <div id="terminal-panel" class="panel">
-                <textarea
-                    name="terminal standard out"
-                    id="terminal-stdout"
-                    data-commented-cols="30"
-                    data-commented-rows="10"
-                    readonly
-                ></textarea>
-                <input
-                    type="text"
-                    name="terminal standard in"
-                    id="terminal-stdin"
-                />
+        <main>
+            <section>
+                <hgroup>
+                    <h1>learning to fly</h1>
+                </hgroup>
+            </section>
+            <section>
+                <div id="loading">Loading...</div>
+            </section>
+            <div id="container">
+                <div id="terminal-panel" class="panel">
+                    <textarea
+                        name="terminal standard out"
+                        id="terminal-stdout"
+                        data-commented-cols="30"
+                        data-commented-rows="10"
+                        readonly
+                    ></textarea>
+                    <input
+                        type="text"
+                        name="terminal standard in"
+                        id="terminal-stdin"
+                    />
+                </div>
+                <div id="viewport-panel" class="panel">
+                    <canvas id="viewport" width="800" height="800"></canvas>
+                </div>
             </div>
-            <div id="viewport-panel" class="panel">
-                <canvas id="viewport" width="800" height="800"></canvas>
-            </div>
-        </div>
+        </main>
     </body>
 </html>
