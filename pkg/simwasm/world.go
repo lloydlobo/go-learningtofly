@@ -1,4 +1,4 @@
-package simwasm
+package main
 
 import "simcore"
 
