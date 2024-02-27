@@ -7,15 +7,15 @@
         <link rel="stylesheet" href="style.css" />
         <!-- <script src="./bootstrap.js"></script> -->
         <script src="static/js/wasm_exec.js"></script>
-        <script>
-            // Reference:
+        <!-- // Reference:
             //  - https://eremeev.ca/posts/golang-wasm-working-with-form/#loading-in-the-browser
             //
             // Error:
             //  - `Uncaught ReferenceError: Go is not defined:`
-            //    browser needs a guide on how to execute the compiled into WebAssembly golang application. Happily, it shipped with Go. Please don’t move it, but copy it!
+            //    browser needs a guide on how to execute the compiled into WebAssembly golang application. Happily, it shipped with Go. Please don't move it, but copy it!
             //    `cd` into static/js/ directory and execute this command:
-            //          cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" $PWD
+            //          cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" $PWD -->
+        <!-- <script>
             const go = new Go();
             WebAssembly.instantiateStreaming(
                 fetch("static/js/page.wasm"),
@@ -23,8 +23,32 @@
             ).then((results) => {
                 go.run(results.instance);
             });
+        </script> -->
+        <script>
+            const go = new Go();
+            (async () => {
+                const wasmResponse = await fetch("static/js/page.wasm");
+                // const wasmBuffer = await wasmResponse.arrayBuffer();
+
+                /** @type {WebAssembly.WebAssemblyInstantiatedSource} - instance */
+                const wasmSrc = await WebAssembly.instantiateStreaming(
+                    wasmResponse, // wasmBuffer,
+                    go.importObject
+                );
+
+                /** @type {WebAssembly.Instance} */
+                const wasmInstance = wasmSrc.instance;
+
+                /** @type  {WebAssembly.Exports} */
+                const wasmExports = wasmInstance.exports;
+
+                console.log({ wasmSrc, wasmInstance, wasmExports });
+
+                const result = wasmExports.Add(10, 20);
+                console.log("result:", result);
+            })();
         </script>
-        <script defer src="index.js" type="application/wasm"></script>
+        <!-- <script src="index.js" type="application/wasm"></script> -->
         <!-- <script src="index.js" type="module"></script> -->
     </head>
 

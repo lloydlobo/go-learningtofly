@@ -12,6 +12,10 @@ import (
 	// "wasmgo/internal/dom"
 )
 
+func Add(a, b int) int {
+	return a + b
+}
+
 func main() {
 	fmt.Println("simwasm/main says: Hello, world!")
 	document := js.Global().Get("document")
