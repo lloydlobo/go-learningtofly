@@ -30,7 +30,7 @@ func TestRouletteWheelSelection_Select_WithHistogram(t *testing.T) {
 		popul = append(popul, p)
 	}
 
-	for range iterations {
+	for i := 0; i < iterations; i++ {
 		selected := method.Select(rng, &popul)
 		actualHistogram[int32(selected.Fitness())]++
 	}

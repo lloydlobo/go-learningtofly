@@ -46,6 +46,11 @@ func jsonWrapper() js.Func {
 	return jsonFunc
 }
 
+// func main() {
+// 	fmt.Println("Go Web Assembly")
+// 	js.Global().Set("formatJSON", jsonWrapper())
+// }
+
 // import (
 // 	// "syscall/js" - is the package that allows us to communicate with browsers
 // 	// using JavaScript APIs. There are lots of packages on the internet, but

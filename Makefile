@@ -1,7 +1,6 @@
 ROOTDIR := .
 PKGDIR := $(ROOTDIR)/pkg
 BUILD_CMD := go build
-PATH_FILE_WASM := assets/json.wasm 
 
 GOFLAGS := "-s -w"
 
@@ -12,11 +11,18 @@ all: build
 #
 # With flags:
 # 	go build -ldflags="$(GOFLAGS)" "$(PKGDIR)/%%d"
+# 
+# Errorlog:
+# 	- this does not uses GOOS=js and GOARCH=wasm for simwasm
 build:
 	@echo "Building packages in $(PKGDIR)..."
 	@for /f "tokens=*" %%d in ('dir /ad /b "$(PKGDIR)"') do ( \
 		go build "$(PKGDIR)/%%d" \
 		)
+
+build-simwasm:
+	cd pkg/simwasm && GOOS=js GOARCH=wasm go build -o "../../web/static/js/page.wasm" && cd ../..
+
 
 # ^ older version for above...
 # | build:

@@ -1,0 +1,5 @@
+{
+  "go": {
+    "experimentalGoBuildFlags": ["-buildmode=exe", "-tags=js,wasm"]
+  }
+}

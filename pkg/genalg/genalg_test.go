@@ -122,7 +122,8 @@ func TestGeneticAlgorithm_Evolve(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			for range epocs { // evolve for n epocs/generations
+			// evolve for n epocs/generations
+			for i := 0; i < epocs; i++ {
 				if dbgTmpEnabled := false; dbgTmpEnabled {
 
 					for _, popul := range tt.args.population {
