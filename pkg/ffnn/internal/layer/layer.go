@@ -17,7 +17,7 @@ func New(neurons []neuron.Neuron) Layer {
 func Random(rng *rand.Rand, inputSize, outputSize uint) Layer {
 	neurons := make([]neuron.Neuron, outputSize)
 
-	for i := range outputSize {
+	for i := 0; i < int(outputSize); i++ {
 		neurons[i] = neuron.Random(rng, inputSize)
 	}
 
@@ -31,7 +31,7 @@ func (l *Layer) Propagate(inputs []float32) (outputs []float32) {
 	}
 	outputs = make([]float32, neuronCount)
 
-	for i := range neuronCount {
+	for i := 0; i < neuronCount; i++ {
 		outputs[i] = l.Neurons[i].Propagate(&inputs)
 	}
 

@@ -38,12 +38,12 @@ func (w *World) Random(rng *rand.Rand) World {
 	)
 
 	animals := make([]Animal, animalCount)
-	for i := range animalCount {
+	for i := 0; i < animalCount; i++ {
 		animals[i] = (&Animal{}).Random(rng)
 	}
 
 	foods := make([]Food, foodCount)
-	for i := range foodCount {
+	for i := 0; i < foodCount; i++ {
 		foods[i] = (&Food{}).Random(rng)
 	}
 

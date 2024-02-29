@@ -6,50 +6,64 @@
         <title>Go - Learning To Fly</title>
         <link rel="stylesheet" href="style.css" />
         <!-- <script src="./bootstrap.js"></script> -->
+        <!-- 
+        Reference:
+            - https://eremeev.ca/posts/golang-wasm-working-with-form/#loading-in-the-browser
+            - https://github.com/markfarnan/go-canvas/blob/master/demo/index.html
+        
+        Error:
+            - `Uncaught ReferenceError: Go is not defined:`
+            browser needs a guide on how to execute the compiled into WebAssembly golang application. Happily, it shipped with Go. Please don't move it, but copy it!
+            `cd` into static/js/ directory and execute this command:
+                    cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" $PWD 
+        -->
+        <!--
+        Add the following polyfill for Microsoft Edge 17/18 support:
+        <script src="https://cdn.jsdelivr.net/npm/text-encoding@0.7.0/lib/encoding.min.js"></script>
+        (see https://caniuse.com/#feat=textencoder)
+        -->
         <script src="static/js/wasm_exec.js"></script>
-        <!-- // Reference:
-            //  - https://eremeev.ca/posts/golang-wasm-working-with-form/#loading-in-the-browser
-            //
-            // Error:
-            //  - `Uncaught ReferenceError: Go is not defined:`
-            //    browser needs a guide on how to execute the compiled into WebAssembly golang application. Happily, it shipped with Go. Please don't move it, but copy it!
-            //    `cd` into static/js/ directory and execute this command:
-            //          cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" $PWD -->
-        <!-- <script>
+        <script>
+            // polyfill
+            if (!WebAssembly.instantiateStreaming) {
+                WebAssembly.instantiateStreaming = async (
+                    resp,
+                    importObject
+                ) => {
+                    const source = awai(await resp).arrayBuffer();
+                    return await WebAssembly.instantiate(source, importObject);
+                };
+            }
+
             const go = new Go();
             WebAssembly.instantiateStreaming(
                 fetch("static/js/page.wasm"),
                 go.importObject
-            ).then((results) => {
-                go.run(results.instance);
+            ).then((result) => {
+                go.run(result.instance);
             });
-        </script> -->
-        <script>
-            const go = new Go();
-            (async () => {
-                const wasmResponse = await fetch("static/js/page.wasm");
-                // const wasmBuffer = await wasmResponse.arrayBuffer();
-
-                /** @type {WebAssembly.WebAssemblyInstantiatedSource} - instance */
-                const wasmSrc = await WebAssembly.instantiateStreaming(
-                    wasmResponse, // wasmBuffer,
-                    go.importObject
-                );
-
-                /** @type {WebAssembly.Instance} */
-                const wasmInstance = wasmSrc.instance;
-
-                /** @type  {WebAssembly.Exports} */
-                const wasmExports = wasmInstance.exports;
-
-                console.log({ wasmSrc, wasmInstance, wasmExports });
-
-                const result = wasmExports.Add(10, 20);
-                console.log("result:", result);
-            })();
         </script>
-        <!-- <script src="index.js" type="application/wasm"></script> -->
-        <!-- <script src="index.js" type="module"></script> -->
+
+        <!-- <script>
+        const go = new Go();
+        (async () => {
+            const wasmResponse = await fetch("static/js/page.wasm");
+            // const wasmBuffer = await wasmResponse.arrayBuffer();
+            /** @type {WebAssembly.WebAssemblyInstantiatedSource} - instance */
+            const wasmSrc = await WebAssembly.instantiateStreaming(
+                wasmResponse, // wasmBuffer,
+                go.importObject
+            );
+            /** @type {WebAssembly.Instance} */
+            const wasmInstance = wasmSrc.instance;
+            /** @type  {WebAssembly.Exports} */
+            const wasmExports = wasmInstance.exports;
+            console.log({ wasmSrc, wasmInstance, wasmExports });
+            const result = wasmExports.myexport;
+            // const result = wasmExports.Add(10, 20);
+            console.log("result:", result);
+        })();
+        </script> -->
     </head>
 
     <body>
@@ -61,6 +75,17 @@
             </section>
             <section>
                 <div id="loading">Loading...</div>
+            </section>
+            <section>
+                <button id="btn">Call FuncName</button>
+                <script>
+                    document
+                        .getElementById("btn")
+                        .addEventListener("click", () => {
+                            console.log(FuncName(1, [1, 2, 3, 4, 5]));
+                            console.log(Add(1, 2));
+                        });
+                </script>
             </section>
             <div id="container">
                 <div id="terminal-panel" class="panel">
@@ -82,5 +107,19 @@
                 </div>
             </div>
         </main>
+        <!-- <script src="./static/js/page.wasm" type="application/wasm"></script> -->
+        <!-- <script src="index.js" type="application/wasm"></script> -->
+        <!-- <script src="index.js" type="module"></script> -->
+        <article>
+            <button id="btn2">Call FuncName</button>;
+            <script defer>
+                document
+                    .getElementById("btn2")
+                    .addEventListener("click", () => {
+                        console.log(FuncName(1, [1, 2, 3, 4, 5]));
+                        console.log(Add(1, 2));
+                    });
+            </script>
+        </article>
     </body>
 </html>

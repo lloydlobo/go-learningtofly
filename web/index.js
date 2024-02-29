@@ -1,8 +1,9 @@
 console.log("from index.js");
 
-import * as simwasm from "./static/js/page.wasm";
+// import * as simwasm from "./static/js/page.wasm";
+// console.log(Add(1,2))
 
-console.log({ simwasm });
+// console.log({ simwasm });
 
 const simulation = new simwasm.Simulation();
 const world = simulation.World();

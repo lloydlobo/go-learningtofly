@@ -75,7 +75,7 @@ func Random(rng *rand.Rand, layers []layertopology.LayerTopology) Network {
 
 	builtLayers := make([]layer.Layer, layerCount)
 
-	for i := range len(layers) - 1 {
+	for i := 0; i < len(layers)-1; i++ {
 		inputSize, outputSize := layers[i].Neurons, layers[i+1].Neurons
 		builtLayers[i] = layer.Random(rng, inputSize, outputSize)
 	}

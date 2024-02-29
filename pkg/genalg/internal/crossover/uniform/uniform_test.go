@@ -43,7 +43,7 @@ func TestUniformCrossover_Crossover_Diff(t *testing.T) {
 	)
 
 	const geneCount = 100
-	for i := range geneCount {
+	for i := 0; i < geneCount; i++ {
 		parentA.Genes = append(parentA.Genes, float32(i+1))
 		parentB.Genes = append(parentB.Genes, -float32(i+1))
 	}
